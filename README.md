@@ -34,3 +34,33 @@ pip install -r requirements.txt //загрузка необходимых биб
 При этом неинформативным признан признак количества владельцев, так как ненулевое значение он имеет только у 11 машин.
 
 Более подробные выводы о разведочном анализе представленны в блокноте eda.ipynb.
+
+
+# ИИС. Лабораторная работа № 2 — повторное выполнение
+
+## Описание
+Прогнозирование цены автомобилей на основе данных из ЛР № 1. Воспроизведены все обязательные и дополнительные задания ЛР № 2.
+
+## Порядок запуска проекта (Ubuntu / Linux)
+```bash
+cd ~/mf_project
+python3 -m venv .venv_Pr_1
+source .venv_Pr_1/bin/activate
+python -m pip install -r requirements.txt
+./mlflow/start_mlflow.sh
+```
+В отдельном терминале (с активированным окружением):
+```bash
+cd ~/mf_project
+jupyter notebook research/research.ipynb
+```
+Открыть интерфейс MLflow по адресу `http://127.0.0.1:5000` (в браузере).
+
+## Содержание экспериментов
+Baseline RandomForest, генерация признаков sklearn, autofeat (*), RFE, SFS forward/backward (*), GridSearchCV, Optuna (*), CatBoost (*), регистрация Production.
+
+## Результаты
+После выполнения блокнота открыть `research/artifacts/comparison.csv` и внести числовые результаты сюда. Скриншоты MLflow и файл MLmodel сохранить в `research/artifacts/`.
+
+## Важно
+Директория `mlflow/` должна быть новой/пустой перед первым запуском. Старую базу и артефакты предварительно перенести в резервную копию. `data/` и `mlflow/` не отправлять в git.

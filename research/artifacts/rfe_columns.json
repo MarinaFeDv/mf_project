@@ -1,0 +1,11 @@
+[
+  "num__Year",
+  "num__Present_Price",
+  "num__Car_Age",
+  "poly__Present_Price",
+  "poly__Car_Age",
+  "poly__Present_Price^2",
+  "poly__Present_Price Car_Age",
+  "poly__Driven_kms Car_Age",
+  "poly__Car_Age^2"
+]

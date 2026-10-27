@@ -1,3 +1,28 @@
-.venv_mf_project
-*.csv
-*.pkl
+# Виртуальные окружения
+.venv/
+.venv_*/
+venv/
+
+# Python
+__pycache__/
+*.pyc
+
+# Jupyter
+.ipynb_checkpoints/
+
+# MLflow
+mlruns/
+mlartifacts/
+mlflow/mlruns.db
+mlflow/mlartifacts/
+mlruns.db
+*.db
+
+# Данные
+data/*.csv
+data/*.pkl
+
+# Служебные файлы
+.ipynb_checkpoints/
+.env
+research/catboost_info/
