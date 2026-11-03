@@ -64,3 +64,79 @@ Baseline RandomForest, генерация признаков sklearn, autofeat (
 
 ## Важно
 Директория `mlflow/` должна быть новой/пустой перед первым запуском. Старую базу и артефакты предварительно перенести в резервную копию. `data/` и `mlflow/` не отправлять в git.
+
+
+ИИС. Лабораторная работа № 3 — развёртывание ML-модели с FastAPI и Docker
+
+Цель работы
+
+Разработать REST API для предсказания стоимости автомобилей на основе ML-модели, зарегистрированной в MLflow в лабораторной работе № 2, и развернуть приложение в Docker-контейнере.
+
+Реализация
+
+Для создания REST API использован фреймворк FastAPI.
+
+Основные файлы приложения:
+
+* services/ml_service/main.py — FastAPI-приложение и обработка HTTP-запросов.
+* services/ml_service/handler.py — загрузка MLflow-модели, подготовка входных данных и получение предсказания.
+* services/ml_service/Dockerfile — инструкция по сборке Docker-образа.
+* services/ml_service/requirements.txt — зависимости приложения.
+* services/models/ — сохранённая MLflow-модель.
+
+Реализованы два HTTP-метода:
+
+* GET / — проверка доступности приложения, возвращает {"Hello": "World"}.
+* POST /api/prediction — принимает характеристики автомобиля и возвращает предсказанную стоимость.
+
+Интерактивная документация API доступна по адресу /docs.
+
+Сборка Docker-образа
+
+Из корневой папки проекта перейти в каталог приложения:
+
+cd ~/mf_project/services/ml_service
+
+Собрать Docker-образ:
+
+sudo docker build -t car-price-api:1 .
+
+Запуск Docker-контейнера
+
+Модель хранится отдельно от Docker-образа и подключается в контейнер как bind mount с доступом только для чтения.
+
+sudo docker run --rm -p 8001:8000 \
+  -v "$(pwd)/../models:/models:ro" \
+  --name car-price-container-v1 \
+  car-price-api:1
+
+После запуска приложение доступно по адресу:
+
+http://localhost:8001
+
+Документация Swagger UI:
+
+http://localhost:8001/docs
+
+Проверка REST API
+
+Для проверки метода POST /api/prediction использован Swagger UI.
+
+Пример запроса с параметром item_id=123:
+
+{
+  "Year": 2015,
+  "Present_Price": 10.0,
+  "Driven_kms": 30000,
+  "Fuel_Type": "Petrol",
+  "Selling_type": "Dealer",
+  "Transmission": "Manual",
+  "Car_Age": 11
+}
+
+Результат выполнения запроса:
+
+{
+  "item_id": 123,
+  "predict": 7.005090242790106
+}

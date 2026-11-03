@@ -26,3 +26,17 @@ data/*.pkl
 .ipynb_checkpoints/
 .env
 research/catboost_info/
+
+# Настройки VS Code
+.vscode/
+
+# Все файлы датасетов
+data/
+
+# Временные результаты исследований
+research/comment.txt
+research/rfe_skl_*.txt
+research/sfs_*.txt
+
+# Временные файлы Python
+*.pyc

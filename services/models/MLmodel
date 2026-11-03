@@ -1,0 +1,34 @@
+artifact_path: model
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.10.12
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.7.2
+mlflow_version: 2.16.0
+model_size_bytes: 1106411
+model_uuid: 693040a5233f47179ba9d35360c544c7
+run_id: 74db5e12a5f24943bc8b24abeadd1787
+saved_input_example_info:
+  artifact_path: input_example.json
+  pandas_orient: split
+  serving_input_path: serving_input_example.json
+  type: dataframe
+signature:
+  inputs: '[{"type": "float", "name": "Year", "required": true}, {"type": "float",
+    "name": "Present_Price", "required": true}, {"type": "float", "name": "Driven_kms",
+    "required": true}, {"type": "string", "name": "Fuel_Type", "required": true},
+    {"type": "string", "name": "Selling_type", "required": true}, {"type": "string",
+    "name": "Transmission", "required": true}, {"type": "float", "name": "Car_Age",
+    "required": true}]'
+  outputs: '[{"type": "tensor", "tensor-spec": {"dtype": "float64", "shape": [-1]}}]'
+  params: null
+utc_time_created: '2026-10-27 14:44:54.091019'
