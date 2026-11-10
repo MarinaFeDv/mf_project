@@ -8,6 +8,10 @@ from pydantic import BaseModel, Field
 
 from handler import FastAPIHandler
 
+import time
+
+from prometheus_client import Counter, Histogram, Gauge, generate_latest
+from fastapi.responses import Response
 
 # ============================================================
 # 1. Создание FastAPI-приложения
@@ -19,6 +23,25 @@ app = FastAPI(
     version="1.0.0"
 )
 
+# ============================================================
+# Метрики Prometheus
+# ============================================================
+
+REQUEST_COUNT = Counter(
+    "prediction_requests_total",
+    "Total number of prediction requests",
+    ["status"]
+)
+
+PREDICTION_TIME = Histogram(
+    "prediction_duration_seconds",
+    "Time spent calculating predictions"
+)
+
+PREDICTED_PRICE = Gauge(
+    "predicted_car_price",
+    "Last predicted car price"
+)
 
 # ============================================================
 # 2. Схема входных данных
@@ -85,13 +108,44 @@ def home():
 @app.post("/api/prediction")
 def predict_car_price(item_id: int, car: CarFeatures):
 
-    # Получаем характеристики автомобиля
-    features = car.model_dump()
+    # Засекаем время начала предсказания
+    start_time = time.perf_counter()
 
-    # Получаем предсказание модели
-    prediction = handler.predict(features)
+    try:
+        # Получаем характеристики автомобиля
+        features = car.model_dump()
 
-    return {
-        "item_id": item_id,
-        "predict": prediction
-    }
+        # Получаем предсказание модели
+        prediction = handler.predict(features)
+
+        # Учитываем успешный запрос
+        REQUEST_COUNT.labels(status="success").inc()
+
+        # Сохраняем последнюю предсказанную цену
+        PREDICTED_PRICE.set(float(prediction))
+
+        return {
+            "item_id": item_id,
+            "predict": prediction
+        }
+
+    except Exception:
+        # Учитываем ошибку предсказания
+        REQUEST_COUNT.labels(status="error").inc()
+        raise
+
+    finally:
+        # Измеряем продолжительность выполнения
+        duration = time.perf_counter() - start_time
+        PREDICTION_TIME.observe(duration)
+
+# ============================================================
+# 6. Метрики для Prometheus
+# ============================================================
+
+@app.get("/metrics")
+def metrics():
+    return Response(
+        content=generate_latest(),
+        media_type="text/plain; version=0.0.4; charset=utf-8"
+    )
