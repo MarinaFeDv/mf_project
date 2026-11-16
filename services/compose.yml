@@ -1,6 +1,6 @@
 services:
   ml_service:
-    image: car-price-api:1
+    image: car-price-api:2
     ports:
       - "8000:8000"
     volumes:

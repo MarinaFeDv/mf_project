@@ -23,9 +23,30 @@ app = FastAPI(
     version="1.0.0"
 )
 
+@app.middleware("http")
+async def count_http_responses(request, call_next):
+    try:
+        response = await call_next(request)
+    except Exception:
+        HTTP_RESPONSES.labels(status_code="500").inc()
+        raise
+
+    if request.url.path != "/metrics":
+        HTTP_RESPONSES.labels(
+            status_code=str(response.status_code)
+        ).inc()
+
+    return response
+
 # ============================================================
 # Метрики Prometheus
 # ============================================================
+
+HTTP_RESPONSES = Counter(
+    "http_responses_total",
+    "Total HTTP responses by status code",
+    ["status_code"]
+)
 
 REQUEST_COUNT = Counter(
     "prediction_requests_total",
@@ -41,6 +62,12 @@ PREDICTION_TIME = Histogram(
 PREDICTED_PRICE = Gauge(
     "predicted_car_price",
     "Last predicted car price"
+)
+
+PREDICTED_PRICE_HISTOGRAM = Histogram(
+    "predicted_car_price_distribution",
+    "Distribution of predicted car prices",
+    buckets=(0.5, 1, 2, 3, 5, 7, 10, 15, 20, 30, 50, 100, float("inf"))
 )
 
 # ============================================================
@@ -123,6 +150,8 @@ def predict_car_price(item_id: int, car: CarFeatures):
 
         # Сохраняем последнюю предсказанную цену
         PREDICTED_PRICE.set(float(prediction))
+
+        PREDICTED_PRICE_HISTOGRAM.observe(float(prediction))
 
         return {
             "item_id": item_id,
