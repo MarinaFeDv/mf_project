@@ -21,3 +21,6 @@ CMD ["python", "send_requests.py"]
 
 # Запуск всех сервисов через Docker Compose из корня проекта:
 # docker compose -f services/compose.yml up -d
+
+# Запуск генератора запросов отдельным контейнером
+# docker run --rm --network services_default -e API_URL=http://ml_service:8000/api/prediction car-price-requests:1
