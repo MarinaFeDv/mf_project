@@ -19,4 +19,5 @@ CMD ["python", "send_requests.py"]
 # Сборка образа из корня проекта:
 # docker build -t car-price-requests:1 -f services/requests/Dockerfile services/requests
 
-# Запуск через Docker Compose будет настроен далее
+# Запуск всех сервисов через Docker Compose из корня проекта:
+# docker compose -f services/compose.yml up -d
